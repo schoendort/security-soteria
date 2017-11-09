@@ -44,15 +44,21 @@ import java.security.Principal;
 
 public class CustomPrincipal implements Principal {
 
-    private final String name;
+	private final String name;
+	private final String ipAddress;
 
-    public CustomPrincipal(String name) {
-        this.name = name;
-    }
+	public CustomPrincipal(String name, String ipAddress) {
+		this.name = name;
+		this.ipAddress = ipAddress;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
 
 }

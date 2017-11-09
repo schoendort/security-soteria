@@ -53,15 +53,17 @@ import javax.servlet.http.HttpServletResponse;
 @ApplicationScoped
 public class TestAuthenticationMechanism implements HttpAuthenticationMechanism {
 
-    @Override
-    public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
-        if (request.getParameter("useCallerPrincipal") != null) {
-            httpMessageContext.notifyContainerAboutLogin(new CustomCallerPrincipal("admin"), singleton("admin"));
-        } else {
-            httpMessageContext.notifyContainerAboutLogin(new CustomPrincipal("admin"), singleton("admin"));
-        }
+	@Override
+	public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response,
+			HttpMessageContext httpMessageContext) throws AuthenticationException {
+		if (request.getParameter("useCallerPrincipal") != null) {
+			httpMessageContext.notifyContainerAboutLogin(new CustomCallerPrincipal("admin"), singleton("admin"));
+		} else {
+			httpMessageContext.notifyContainerAboutLogin(new CustomPrincipal("admin", request.getRemoteAddr()),
+					singleton("admin"));
+		}
 
-        return AuthenticationStatus.SUCCESS;
-    }
+		return AuthenticationStatus.SUCCESS;
+	}
 
 }

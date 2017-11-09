@@ -43,6 +43,7 @@ package org.glassfish.soteria.test;
 import static javax.security.enterprise.authentication.mechanism.http.AuthenticationParameters.withParams;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.annotation.security.DeclareRoles;
 import javax.inject.Inject;
@@ -52,7 +53,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 
 /**
  * Test Servlet that authenticates that authenticates the request and returns
@@ -62,21 +62,25 @@ import java.security.Principal;
 @WebServlet("/servlet")
 public class Servlet extends HttpServlet {
 
-    @Inject
-    private SecurityContext securityContext;
+	@Inject
+	private SecurityContext securityContext;
 
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        securityContext.authenticate(request, response, withParams());
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		securityContext.authenticate(request, response, withParams());
 
-        response.getWriter().write(securityContext.getCallerPrincipal().getClass().getName()+",");
-        Principal applicationPrincipal;
-        if (request.getParameter("useCallerPrincipal") != null) {
-            applicationPrincipal=securityContext.getPrincipalsByType(CustomCallerPrincipal.class).toArray(new CustomCallerPrincipal[0])[0];
-        } else {
-            applicationPrincipal=securityContext.getPrincipalsByType(CustomPrincipal.class).toArray(new CustomPrincipal[0])[0];
-        }
-        response.getWriter().write(applicationPrincipal.getClass().getName());
-    }
+		response.getWriter().write(securityContext.getCallerPrincipal().getClass().getName() + ",");
+		Principal applicationPrincipal;
+		if (request.getParameter("useCallerPrincipal") != null) {
+			applicationPrincipal = securityContext.getPrincipalsByType(CustomCallerPrincipal.class)
+					.toArray(new CustomCallerPrincipal[0])[0];
+		} else {
+			applicationPrincipal = securityContext.getPrincipalsByType(CustomPrincipal.class)
+					.toArray(new CustomPrincipal[0])[0];
+			response.getWriter()
+					.write(", ip address = " + ((CustomPrincipal) applicationPrincipal).getIpAddress() + ", ");
+		}
+		response.getWriter().write(applicationPrincipal.getClass().getName());
+	}
 
 }
